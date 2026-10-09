@@ -1,4 +1,7 @@
 from . import controlles
 from . import models
 from . import wizard
-from . import tests
+
+import odoo
+if odoo.tools.config['test_enable']:
+    from . import tests

@@ -13,25 +13,25 @@ com base no valor total dos pedidos de venda.
 """,
     'summary': 'Gestão de Fidelização de Clientes e Cálculo de Pontos',
     'author': 'Jardel Elias Bernardo',
-    'website': '',
+    'website': 'https://github.com/JardelLion',
     'license': 'LGPL-3',
     'category': '',
     'depends': [
-        'base','sale_loyalty','website_sale_loyalty','website_sale', 'portal','sale_management'
+        'base','contacts','sale_loyalty','website_sale_loyalty','website_sale', 'portal','sale_management'
     ],
     "data": [
         "data/cron_data.xml",
-        "data/loyalty_data.xml",
         "data/mail_template_data.xml",
-        "security/ir.model.access.csv",
         "security/security.xml",
+        "security/ir.model.access.csv",
         "views/loyalty_program_views.xml",
         "views/res_partner_views.xml",
         "report/loyalty_report_template.xml",
         "wizard/loyalty_card_update_balance_views.xml"
     ],
     'demo': [
-        'demo/demo_data.xml'
+        'demo/demo_data.xml',
+        "demo/loyalty_data.xml",
     ],
     'auto_install': False,
     'application': False,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Corrigido: noupdate em vez de numpy -->
-    <data noupdate="0">
+    <data noupdate="1">
         <!-- Programa de Fidelidade Padrão do Módulo -->
         <record id="default_loyalty_program" model="loyalty.program">
             <field name="name">Programa de Fidelização Geral</field>
