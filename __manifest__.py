@@ -22,8 +22,8 @@ com base no valor total dos pedidos de venda.
     "data": [
         "data/cron_data.xml",
         "data/mail_template_data.xml",
-        "security/ir.model.access.csv",
         "security/security.xml",
+        "security/ir.model.access.csv",
         "views/loyalty_program_views.xml",
         "views/res_partner_views.xml",
         "report/loyalty_report_template.xml",
