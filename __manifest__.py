@@ -21,7 +21,6 @@ com base no valor total dos pedidos de venda.
     ],
     "data": [
         "data/cron_data.xml",
-        "data/loyalty_data.xml",
         "data/mail_template_data.xml",
         "security/ir.model.access.csv",
         "security/security.xml",
@@ -31,7 +30,8 @@ com base no valor total dos pedidos de venda.
         "wizard/loyalty_card_update_balance_views.xml"
     ],
     'demo': [
-        'demo/demo_data.xml'
+        'demo/demo_data.xml',
+        "demo/loyalty_data.xml",
     ],
     'auto_install': False,
     'application': False,
