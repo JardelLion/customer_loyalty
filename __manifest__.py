@@ -17,7 +17,7 @@ com base no valor total dos pedidos de venda.
     'license': 'LGPL-3',
     'category': '',
     'depends': [
-        'base','sale_loyalty','website_sale_loyalty','website_sale', 'portal','sale_management'
+        'base','contacts','sale_loyalty','website_sale_loyalty','website_sale', 'portal','sale_management'
     ],
     "data": [
         "data/cron_data.xml",
