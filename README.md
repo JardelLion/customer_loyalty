@@ -1,58 +1,132 @@
-# Módulo Odoo 18: Customer Loyalty Extension (`customer_loyalty`)
+# Customer Loyalty — Odoo 18
 
-[![Odoo Version](https://img.shields.io/badge/Odoo-18.0-714B67.svg)](https://www.odoo.com)
-[![License](https://img.shields.io/badge/License-LGPL--3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0.html)
-[![Role](https://img.shields.io/badge/Architecture-Tech%20Lead-orange.svg)]()
+Módulo de personalização do programa de fidelização de clientes para o **Odoo 18**, desenvolvido para complementar a funcionalidade nativa de Loyalty, com foco no cálculo de pontos com base no valor total dos pedidos de venda e na reutilização dos mecanismos de gestão de carteiras disponibilizados pela plataforma.
 
-## 🎯 Visão Geral do Projeto
+## Funcionalidades
 
-O módulo **`customer_loyalty`** estende as capacidades nativas de fidelização do Odoo 18 (`loyalty` e `sale_loyalty`), adicionando uma camada de inteligência de negócio focada na progressão automática de níveis de clientes (**Bronze**, **Silver**, **Gold**), visualização de saldo consolidado em tempo real no backend, automações agendadas e relatórios analíticos em PDF.
+### 1. Integração com o sistema nativo de fidelização
 
-Em alinhamento com as melhores práticas de engenharia de software e arquitetura Odoo, este módulo **não reinventa o motor de recompensas ou e-commerce**. Em vez disso, alavanca a infraestrutura nativa do ERP, reduzindo a dívida técnica e garantindo total compatibilidade com futuras atualizações.
+O módulo utiliza os modelos e mecanismos nativos do Odoo para gerir os programas de fidelização, os cartões de fidelização e a atribuição de pontos.
 
----
+Esta abordagem evita a duplicação de funcionalidades existentes e permite aproveitar o fluxo nativo de processamento dos pontos, mantendo a compatibilidade com a estrutura do Odoo.
 
-## 🚀 Funcionalidades Principais
+### 2. Cálculo personalizado de pontos
 
-* **Relação Multi-Carteira (1:N):** Conexão nativa com `loyalty.card`, permitindo que um cliente acumule pontos em múltiplos programas em paralelo (compras, campanhas sazonais, filiais)[cite: 1].
-* **Gestão Automática de Níveis (`res.partner`):**
-  * 🥉 **Bronze:** $0$ a $999$ pontos
-  * 🥈 **Silver:** $1.000$ a $4.999$ pontos
-  * 🥇 **Gold:** $5.000+$ pontos
-* **Pontuação Automática na Venda:** Atribuição de $1\text{ ponto}$ a cada $10\text{ unidades monetárias}$ consumidas na confirmação do pedido de venda (`sale.order`).
-* **UI/UX em Tempo Real (OWL Widget):** Exibição badge do saldo consolidado e nível diretamente na Form View do cliente no backend.
-* **Segurança & Controlo de Acesso:** Edição manual de pontos restrita ao grupo de segurança `customer_loyalty.group_loyalty_card`.
-* **Automação Semanal (Cron Job):** Processo agendado (domingos às 23:00) que identifica clientes Gold e dispara notificações/cupons promocionais por e-mail.
-* **Relatório Analítico QWeb (PDF):** Extrato consolidado de saldo e carteiras ativas do parceiro.
-* **Integração Nativa no Portal/Checkout:** Resgate direto de recompensas e consulta de histórico via e-commerce/portal nativo do Odoo.
+O módulo permite calcular os pontos de fidelização com base no valor total do pedido de venda, utilizando a seguinte regra:
 
----
+**1 ponto por cada 10 unidades monetárias do valor total do pedido.**
 
-## 🏗️ Estrutura do Módulo
+O cálculo utiliza divisão inteira, descartando a parte decimal do resultado. Assim, os valores inferiores à próxima unidade de dez não geram um ponto adicional.
 
-```text
-customer_loyalty/
-├── __init__.py
-├── __manifest__.py
-├── README.md
-├── DOCUMENTATION.md
-├── data/
-│   ├── cron_data.xml
-│   └── loyalty_data.xml
-├── models/
-│   ├── __init__.py
-│   ├── loyalty_card.py
-│   ├── res_partner.py
-│   └── sale_order.py
-├── report/
-│   ├── loyalty_report.xml
-│   └── loyalty_report_template.xml
-├── security/
-│   ├── ir.model.access.csv
-│   └── loyalty_security.xml
-├── static/
-│   └── src/
-│       └── components/
-│           └── loyalty_badge/
-└── views/
-    ├── partner_views.xml
+Exemplos:
+
+| Valor total do pedido | Pontos atribuídos |
+| --------------------: | ----------------: |
+|                   100 |                10 |
+|                   105 |                10 |
+|                   109 |                10 |
+|                   110 |                11 |
+|                   250 |                25 |
+
+A regra personalizada é aplicada através da extensão do método `_program_check_compute_points()` do modelo `sale.order`, aproveitando o mecanismo nativo de cálculo de pontos dos programas de fidelização.
+
+### 3. Configuração através do campo `use_order_total_for_points`
+
+Foi adicionado ao modelo `loyalty.program` o campo booleano `use_order_total_for_points`, que permite determinar se um programa de fidelização deve utilizar a regra personalizada de cálculo de pontos.
+
+O campo funciona da seguinte forma:
+
+* **Ativado:** o programa calcula os pontos com base no valor total do pedido, atribuindo um ponto por cada dez unidades monetárias.
+* **Desativado:** o programa mantém o comportamento de cálculo de pontos definido pelo Odoo.
+
+Esta configuração permite aplicar a regra personalizada apenas aos programas pretendidos, sem alterar o comportamento dos restantes programas de fidelização.
+
+### 4. Reutilização do mecanismo nativo de atribuição de pontos
+
+A implementação preserva o fluxo nativo do Odoo para o processamento dos pontos, evitando criar um mecanismo paralelo de atualização das carteiras.
+
+A extensão do cálculo permite adaptar a quantidade de pontos atribuídos, enquanto o Odoo continua responsável pelo processamento subsequente, de acordo com as regras de elegibilidade e configuração do programa.
+
+Para que a atribuição ocorra, o programa deve cumprir os critérios de aplicabilidade exigidos pelo sistema nativo.
+
+## Arquitectura técnica
+
+| Componente        | Responsabilidade                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| `loyalty.program` | Configuração dos programas de fidelização e do campo `use_order_total_for_points`. |
+| `sale.order`      | Extensão do cálculo de pontos com base no valor total do pedido de venda.          |
+| `sale_loyalty`    | Integração com os mecanismos nativos de fidelização do Odoo.                       |
+
+## Requisitos
+
+* Odoo 18.0.
+* Aplicação de Vendas (`sale`).
+* Funcionalidades nativas de fidelização disponibilizadas pelo módulo `sale_loyalty`.
+
+## Instalação
+
+1. Copiar o módulo `customer_loyalty` para um directório de addons do Odoo.
+2. Confirmar que as dependências declaradas no ficheiro `__manifest__.py` estão disponíveis.
+3. Reiniciar o serviço do Odoo.
+4. Actualizar a lista de aplicações.
+5. Instalar o módulo **Customer Loyalty**.
+
+Para instalar através da linha de comandos, ajustar os caminhos e o nome da base de dados à instalação utilizada:
+
+```bash
+./odoo-bin \
+    -c /caminho/para/odoo.conf \
+    -d nome_da_base_de_dados \
+    -i customer_loyalty \
+    --stop-after-init
+```
+
+Se o módulo já estiver instalado e for necessário aplicar alterações ao código, utilizar `-u customer_loyalty` em vez de `-i customer_loyalty`.
+
+## Configuração e utilização
+
+Após a instalação:
+
+1. Aceder à aplicação de Vendas e às funcionalidades de fidelização.
+2. Criar ou seleccionar um programa de fidelização.
+3. Activar o campo `use_order_total_for_points` no programa que deverá utilizar o cálculo personalizado.
+4. Confirmar que o programa está configurado para ser aplicado automaticamente aos pedidos elegíveis, de acordo com os critérios nativos do Odoo.
+5. Criar e confirmar um pedido de venda elegível.
+6. Verificar se a quantidade de pontos calculada corresponde ao valor total do pedido e à regra definida.
+
+Os programas em que o campo `use_order_total_for_points` não estiver activado continuarão a utilizar o cálculo nativo de pontos.
+
+## Testes recomendados
+
+Para validar a implementação, recomenda-se testar os seguintes cenários:
+
+* Instalação e actualização do módulo.
+* Activação e desactivação do campo `use_order_total_for_points`.
+* Cálculo correcto dos pontos para diferentes valores totais.
+* Confirmação de que os valores inferiores à próxima unidade de dez não geram pontos adicionais.
+* Verificação do comportamento de programas com a regra personalizada desactivada.
+* Confirmação de que os programas cumprem os critérios nativos de elegibilidade.
+* Verificação da integração com o mecanismo nativo de fidelização e das actualizações das carteiras.
+
+## Princípios de implementação
+
+* **Reutilização:** aproveitar os modelos e mecanismos nativos do Odoo.
+* **Modularidade:** isolar a regra personalizada através da extensão dos modelos existentes.
+* **Compatibilidade:** preservar o comportamento padrão dos programas que não utilizam a regra personalizada.
+* **Manutenibilidade:** seguir os padrões de desenvolvimento e extensão do Odoo.
+* **Configuração:** permitir activar a regra personalizada por programa através de um campo booleano.
+
+## Compatibilidade
+
+* **ERP:** Odoo
+* **Versão:** 18.0
+* **Tipo:** Módulo personalizado
+* **Dependência principal:** `sale_loyalty`
+
+## Autor
+
+**Jardel Elias Bernardo**
+
+Odoo Developer
+
+GitHub: [JardelLion](https://github.com/JardelLion)

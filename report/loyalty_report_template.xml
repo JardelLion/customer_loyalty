@@ -27,7 +27,7 @@
                             </div>
                         </div>
 
-                        <h4>Carteiras de Pontos</h4>
+                        <!-- <h4>Carteiras de Pontos</h4>
                         <table class="table table-sm table-striped">
                             <thead>
                                 <tr>
@@ -43,7 +43,40 @@
                                     <td class="text-end"><span t-field="card.points"/></td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> -->
+
+                        <!-- Tabela 2: Histórico de Movimentações (Nativo loyalty.history) -->
+                        <h4>Histórico de Movimentações</h4>
+                        <t t-set="histories" t-value="doc.loyalty_card_ids.mapped('history_ids')"/>
+                        
+                        <t t-if="histories">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr class="bg-light">
+                                        <th>Data</th>
+                                        <th>Cartão</th>
+                                        <th>Descrição / Motivo</th>
+                                        <th class="text-end">Atribuídos (+)</th>
+                                        <th class="text-end">Utilizados (-)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="histories.sorted(key=lambda h: h.create_date, reverse=True)" t-as="line">
+                                        <td><span t-field="line.create_date" t-options='{"widget": "date"}'/></td>
+                                        <td><span t-field="line.card_id.code"/></td>
+                                        <td><span t-field="line.description"/></td>
+                                        <td class="text-end text-success">
+                                            <span t-if="line.issued &gt; 0">+<t t-esc="line.issued"/></span>
+                                            <span t-else="">-</span>
+                                        </td>
+                                        <td class="text-end text-danger">
+                                            <span t-if="line.used &gt; 0">-<t t-esc="line.used"/></span>
+                                            <span t-else="">-</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
                     </div>
                 </t>
             </t>
