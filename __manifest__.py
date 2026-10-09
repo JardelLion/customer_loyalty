@@ -8,9 +8,11 @@
     'license': 'LGPL-3',
     'category': '',
     'depends': [
-        'base', 'contacts'
+        'base','sale_loyalty','website','sale_management'
     ],
-    'data': [],
+    "data": [
+        "views/res_partner_views.xml"
+    ],
     'demo': [],
     'auto_install': False,
     'application': False,
