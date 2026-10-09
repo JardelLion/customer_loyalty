@@ -12,6 +12,8 @@
     ],
     "data": [
         'security/security.xml',
+        'data/mail_template_data.xml',
+        'data/cron_data.xml',
         "views/res_partner_views.xml"
     ],
     'demo': [],
