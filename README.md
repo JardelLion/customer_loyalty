@@ -24,7 +24,7 @@ Em alinhamento com as melhores práticas de engenharia de software e arquitetura
 * **Segurança & Controlo de Acesso:** Edição manual de pontos restrita ao grupo de segurança `customer_loyalty.group_loyalty_card`.
 * **Automação Semanal (Cron Job):** Processo agendado (domingos às 23:00) que identifica clientes Gold e dispara notificações/cupons promocionais por e-mail.
 * **Relatório Analítico QWeb (PDF):** Extrato consolidado de saldo e carteiras ativas do parceiro.
-* **Integração Nativa no Portal/Checkout:** Resgate direto de recompensas e consulta de histórico via e-commerce/portal nativo do Odoo[cite: 4, 5].
+* **Integração Nativa no Portal/Checkout:** Resgate direto de recompensas e consulta de histórico via e-commerce/portal nativo do Odoo.
 
 ---
 
