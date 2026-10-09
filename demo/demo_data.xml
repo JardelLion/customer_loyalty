@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data numpy="1">
+
+        <!-- 1. Utilizador do Grupo Autorizado (Para testar edição de pontos) -->
+        <record id="user_loyalty_manager" model="res.users">
+            <field name="name">Gestor de Fidelidade</field>
+            <field name="login">loyalty_mgr</field>
+            <field name="email">loyalty_mgr@example.com</field>
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_user'), ref('customer_loyalty.group_loyalty_card')])]"/>
+        </record>
+
+        <!-- 2. Clientes de Teste com Diferentes Níveis -->
+        
+        <!-- Cliente Bronze (Soma de pontos: 200 pts) -->
+        <record id="partner_bronze" model="res.partner">
+            <field name="name">Cliente Teste Bronze</field>
+            <field name="email">bronze.customer@example.com</field>
+            <field name="street">Rua dos Testes, 10</field>
+            <field name="total_loyalty_points">200.0</field>
+            <field name="loyalty_level">bronze</field>
+        </record>
+
+        <!-- Cliente Silver (Soma de pontos: 1.500 pts) -->
+        <record id="partner_silver" model="res.partner">
+            <field name="name">Cliente Teste Silver</field>
+            <field name="email">silver.customer@example.com</field>
+            <field name="street">Avenida Central, 500</field>
+            <field name="total_loyalty_points">1500.0</field>
+            <field name="loyalty_level">silver</field>
+        </record>
+
+        <!-- Cliente Gold (Soma de pontos: 5.500 pts - Para testar o Cron) -->
+        <record id="partner_gold" model="res.partner">
+            <field name="name">Cliente Teste Gold VIP</field>
+            <field name="email">gold.customer@example.com</field>
+            <field name="street">Alameda do Ouro, 1000</field>
+            <field name="total_loyalty_points">5500.0</field>
+            <field name="loyalty_level">gold</field>
+        </record>
+
+        <!-- 3. Carteiras de Pontos (loyalty.card) associadas aos clientes (1:N) -->
+        
+        <!-- Carteira 1 do Cliente Gold no Programa Padrão -->
+        <record id="card_gold_main" model="loyalty.card">
+            <field name="partner_id" ref="partner_gold"/>
+            <field name="program_id" ref="customer_loyalty.default_loyalty_program"/>
+            <field name="points">5000.0</field>
+        </record>
+
+        <!-- Carteira 2 do Cliente Gold numa Campanha Sazonal (Garante a relação 1:N) -->
+        <record id="card_gold_promo" model="loyalty.card">
+            <field name="partner_id" ref="partner_gold"/>
+            <field name="program_id" ref="customer_loyalty.default_loyalty_program"/>
+            <field name="points">500.0</field>
+        </record>
+
+        <!-- Carteira do Cliente Silver -->
+        <record id="card_silver_main" model="loyalty.card">
+            <field name="partner_id" ref="partner_silver"/>
+            <field name="program_id" ref="customer_loyalty.default_loyalty_program"/>
+            <field name="points">1500.0</field>
+        </record>
+
+        <!-- Carteira do Cliente Bronze -->
+        <record id="card_bronze_main" model="loyalty.card">
+            <field name="partner_id" ref="partner_bronze"/>
+            <field name="program_id" ref="customer_loyalty.default_loyalty_program"/>
+            <field name="points">200.0</field>
+        </record>
+
+    </data>
+</odoo>

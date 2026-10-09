@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_loyalty_card_update_balance_form_inherit" model="ir.ui.view">
+        <field name="name">loyalty.card.update.balance.form.inherit</field>
+        <field name="model">loyalty.card.update.balance</field>
+        <field name="inherit_id" ref="loyalty.loyalty_card_update_balance_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Adiciona a restrição de grupo ao botão de confirmação -->
+            <xpath expr="//button[@name='action_update_card_point']" position="attributes">
+                <attribute name="groups">customer_loyalty.group_loyalty_card</attribute>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

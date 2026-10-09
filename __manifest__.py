@@ -8,17 +8,21 @@
     'license': 'LGPL-3',
     'category': '',
     'depends': [
-        'base','sale_loyalty','website','sale_management'
+        'base','sale_loyalty','website_sale_loyalty','website_sale', 'portal','sale_management'
     ],
     "data": [
         'security/security.xml',
         "security/ir.model.access.csv",
         'data/mail_template_data.xml',
         'data/cron_data.xml',
+        'data/loyalty_data.xml',
         "views/res_partner_views.xml",
-        'report/loyalty_report_template.xml'
+        'report/loyalty_report_template.xml',
+        'wizard/loyalty_card_update_balance_views.xml'
     ],
-    'demo': [],
+    'demo': [
+        'demo/demo_data.xml'
+    ],
     'auto_install': False,
     'application': False,
     'assets': {
