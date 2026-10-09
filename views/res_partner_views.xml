@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View res.partner form -->
+    <record id="customer_loyalty_view_res_partner_form" model="ir.ui.view">
+        <field name="name">view.res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name='total_loyalty_points' nolabel='1' widget="loyalty_points_badge"/>
+                <field name='loyalty_level' invisible='1'/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Loyalty &amp; Points" name="loyalty_tab">
+                    <field name="loyalty_card_ids" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}">
+                        <list editable='bottom' create="0" delete="0" edit="1">
+                            <field name="program_id" readonly='1'/>
+                            <field name="code" readonly='1'/>
+                            <field name="points" groups="customer_loyalty.group_loyalty_card"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

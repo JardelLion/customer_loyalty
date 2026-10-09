@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Corrigido: noupdate em vez de numpy -->
+    <data noupdate="1">
+        <!-- Programa de Fidelidade Padrão do Módulo -->
+        <record id="default_loyalty_program" model="loyalty.program">
+            <field name="name">Programa de Fidelização Geral</field>
+            <field name="program_type">loyalty</field>
+            <field name="applies_on">both</field>
+            <field name="trigger">auto</field>
+            <field name="portal_visible">True</field>
+            <field name="sale_ok">True</field>
+            <field name="ecommerce_ok">True</field>
+            <field name="portal_point_name">Loyalty point(s)</field>
+        </record>
+
+        <!-- Regra de Ganho: 1 ponto a cada 10 unidades monetárias -->
+        <record id="rule_points_per_money" model="loyalty.rule">
+            <field name="program_id" ref="default_loyalty_program"/>
+            <field name="reward_point_mode">money</field>
+            <field name="reward_point_amount">0.1</field> <!-- 1 ponto por cada 10 unidades monetárias -->
+            <field name="minimum_amount">10</field>
+            <field name="minimum_amount_tax_mode">excl</field>
+        </record>
+
+        <!-- Recompensa: Desconto Geral no Pedido -->
+        <record id="reward_general_discount" model="loyalty.reward">
+            <field name="program_id" ref="default_loyalty_program"/>
+            <field name="reward_type">discount</field>
+            <field name="discount_mode">percent</field>
+            <field name="discount">10</field> <!-- 10% de desconto -->
+            <field name="discount_applicability">order</field>
+            <field name="required_points">100</field>
+        </record>
+    </data>
+</odoo>
