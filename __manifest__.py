@@ -11,6 +11,7 @@
         'base','sale_loyalty','website','sale_management'
     ],
     "data": [
+        'security/security.xml',
         "views/res_partner_views.xml"
     ],
     'demo': [],
