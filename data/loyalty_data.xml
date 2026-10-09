@@ -20,7 +20,6 @@
             <field name="program_id" ref="default_loyalty_program"/>
             <field name="reward_point_mode">money</field>
             <field name="reward_point_amount">0.1</field> <!-- 1 ponto por cada 10 unidades monetárias -->
-            <field name="minimum_amount">10</field>
             <field name="minimum_amount_tax_mode">excl</field>
         </record>
 
