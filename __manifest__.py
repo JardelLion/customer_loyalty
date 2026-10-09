@@ -1,8 +1,17 @@
 {
     'name': 'Customer Loyalty',
     'version': '1.0.0',
-    'description': 'customer Loyalty',
-    'summary': 'Customer Loyalty',
+    'description': """
+Módulo de fidelização de clientes que estende a funcionalidade
+nativa do Odoo para permitir o cálculo personalizado de pontos
+com base no valor total dos pedidos de venda.
+
+    Atribui 1 ponto por cada 10 unidades monetárias do valor total
+    do pedido, utilizando divisão inteira, e permite ativar esta
+    regra através do campo use_order_total_for_points nos programas
+    de fidelização.
+""",
+    'summary': 'Gestão de Fidelização de Clientes e Cálculo de Pontos',
     'author': 'Jardel Elias Bernardo',
     'website': '',
     'license': 'LGPL-3',

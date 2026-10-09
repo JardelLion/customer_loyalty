@@ -1,75 +1,77 @@
 # Customer Loyalty — Odoo 18
 
-Módulo de personalização do programa de fidelização de clientes para o **Odoo 18**, desenvolvido para complementar as funcionalidades nativas do Odoo Loyalty com recursos adicionais de acompanhamento, visualização e gestão de pontos.
+Módulo de personalização do programa de fidelização de clientes para o **Odoo 18**, desenvolvido para complementar a funcionalidade nativa de Loyalty, com foco no cálculo de pontos com base no valor total dos pedidos de venda e na reutilização dos mecanismos de gestão de carteiras disponibilizados pela plataforma.
 
 ## Funcionalidades
 
 ### 1. Integração com o sistema nativo de fidelização
 
-O módulo aproveita os mecanismos nativos do Odoo para gerir os cartões de fidelização e a atribuição de pontos, evitando a duplicação de funcionalidades já disponibilizadas pela plataforma.
+O módulo utiliza os modelos e mecanismos nativos do Odoo para gerir os programas de fidelização, os cartões de fidelização e a atribuição de pontos.
 
-Esta abordagem permite manter a compatibilidade com o funcionamento padrão do Odoo e reduzir a complexidade da implementação.
+Esta abordagem evita a duplicação de funcionalidades existentes e permite aproveitar o fluxo nativo de processamento dos pontos, mantendo a compatibilidade com a estrutura do Odoo.
 
-### 2. Resumo de fidelização do cliente
+### 2. Cálculo personalizado de pontos
 
-Disponibiliza informações relacionadas com a fidelização do cliente, permitindo acompanhar os seus pontos e o respectivo nível de fidelização.
+O módulo permite calcular os pontos de fidelização com base no valor total do pedido de venda, utilizando a seguinte regra:
 
-O objectivo é facilitar a consulta das informações relevantes para a equipa de vendas e para os utilizadores responsáveis pela gestão dos clientes.
+**1 ponto por cada 10 unidades monetárias do valor total do pedido.**
 
-### 3. Widget interactivo com OWL
+O cálculo utiliza divisão inteira, descartando a parte decimal do resultado. Assim, os valores inferiores à próxima unidade de dez não geram um ponto adicional.
 
-Inclui um widget desenvolvido com **OWL (Odoo Web Library)** para apresentar informações de fidelização numa interface interactiva integrada no Odoo.
+Exemplos:
 
-O componente permite consultar os dados relevantes de forma organizada, melhorando a experiência de utilização.
+| Valor total do pedido | Pontos atribuídos |
+| --------------------: | ----------------: |
+|                   100 |                10 |
+|                   105 |                10 |
+|                   109 |                10 |
+|                   110 |                11 |
+|                   250 |                25 |
 
-### 4. Ajustes manuais de pontos
+A regra personalizada é aplicada através da extensão do método `_program_check_compute_points()` do modelo `sale.order`, aproveitando o mecanismo nativo de cálculo de pontos dos programas de fidelização.
 
-Disponibiliza um assistente para efectuar ajustes manuais de pontos de fidelização, de acordo com as permissões configuradas.
+### 3. Configuração através do campo `use_order_total_for_points`
 
-Esta funcionalidade permite tratar situações excepcionais sem alterar directamente os dados na base de dados.
+Foi adicionado ao modelo `loyalty.program` o campo booleano `use_order_total_for_points`, que permite determinar se um programa de fidelização deve utilizar a regra personalizada de cálculo de pontos.
 
-### 5. Envio automático de e-mails para clientes Gold
+O campo funciona da seguinte forma:
 
-Inclui uma acção automatizada para o envio de e-mails aos clientes que se enquadram no nível Gold, utilizando o mecanismo de tarefas agendadas do Odoo.
+* **Ativado:** o programa calcula os pontos com base no valor total do pedido, atribuindo um ponto por cada dez unidades monetárias.
+* **Desativado:** o programa mantém o comportamento de cálculo de pontos definido pelo Odoo.
 
-A automatização reduz a necessidade de intervenções manuais e facilita a comunicação com os clientes elegíveis.
+Esta configuração permite aplicar a regra personalizada apenas aos programas pretendidos, sem alterar o comportamento dos restantes programas de fidelização.
 
-### 6. Relatório em PDF
+### 4. Reutilização do mecanismo nativo de atribuição de pontos
 
-Disponibiliza um relatório em PDF com informações relacionadas com a fidelização, permitindo consultar e partilhar os dados apresentados pelo módulo.
+A implementação preserva o fluxo nativo do Odoo para o processamento dos pontos, evitando criar um mecanismo paralelo de atualização das carteiras.
 
-O relatório utiliza os mecanismos de geração de documentos do Odoo.
+A extensão do cálculo permite adaptar a quantidade de pontos atribuídos, enquanto o Odoo continua responsável pelo processamento subsequente, de acordo com as regras de elegibilidade e configuração do programa.
+
+Para que a atribuição ocorra, o programa deve cumprir os critérios de aplicabilidade exigidos pelo sistema nativo.
 
 ## Arquitectura técnica
 
-O módulo foi desenvolvido seguindo os padrões de extensão do Odoo, privilegiando a reutilização das funcionalidades nativas e a separação das responsabilidades.
-
-| Componente                 | Responsabilidade                                            |
-| -------------------------- | ----------------------------------------------------------- |
-| Modelos existentes do Odoo | Gestão nativa dos cartões e dos mecanismos de fidelização   |
-| Modelos personalizados     | Informação complementar de fidelização e níveis de clientes |
-| OWL                        | Apresentação interactiva das informações de fidelização     |
-| Assistente (Wizard)        | Ajustes manuais de pontos                                   |
-| Segurança                  | Controlo de acesso às operações disponibilizadas            |
-| Acções agendadas (Cron)    | Automatização do envio de e-mails                           |
-| QWeb / PDF                 | Geração de relatórios                                       |
+| Componente        | Responsabilidade                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| `loyalty.program` | Configuração dos programas de fidelização e do campo `use_order_total_for_points`. |
+| `sale.order`      | Extensão do cálculo de pontos com base no valor total do pedido de venda.          |
+| `sale_loyalty`    | Integração com os mecanismos nativos de fidelização do Odoo.                       |
 
 ## Requisitos
 
-* Odoo 18.0
-* Aplicação de Vendas, conforme a configuração utilizada
-* Funcionalidades nativas de fidelização do Odoo
-* Dependências adicionais declaradas no ficheiro `__manifest__.py`
+* Odoo 18.0.
+* Aplicação de Vendas (`sale`).
+* Funcionalidades nativas de fidelização disponibilizadas pelo módulo `sale_loyalty`.
 
 ## Instalação
 
-1. Copiar o módulo para um directório de addons do Odoo.
-2. Confirmar que as dependências declaradas no `__manifest__.py` estão instaladas.
+1. Copiar o módulo `customer_loyalty` para um directório de addons do Odoo.
+2. Confirmar que as dependências declaradas no ficheiro `__manifest__.py` estão disponíveis.
 3. Reiniciar o serviço do Odoo.
 4. Actualizar a lista de aplicações.
 5. Instalar o módulo **Customer Loyalty**.
 
-Para instalar através da linha de comandos, ajustar o caminho da configuração, o nome da base de dados e o caminho dos addons à respectiva instalação:
+Para instalar através da linha de comandos, ajustar os caminhos e o nome da base de dados à instalação utilizada:
 
 ```bash
 ./odoo-bin \
@@ -79,46 +81,47 @@ Para instalar através da linha de comandos, ajustar o caminho da configuração
     --stop-after-init
 ```
 
+Se o módulo já estiver instalado e for necessário aplicar alterações ao código, utilizar `-u customer_loyalty` em vez de `-i customer_loyalty`.
+
 ## Configuração e utilização
 
 Após a instalação:
 
-1. Configurar os programas de fidelização através das funcionalidades nativas do Odoo.
-2. Confirmar as permissões dos utilizadores que irão utilizar os ajustes manuais.
-3. Verificar a configuração das tarefas agendadas e dos modelos de e-mail.
-4. Aceder às funcionalidades personalizadas disponibilizadas pelo módulo.
-5. Gerar o relatório em PDF para validar a apresentação das informações.
+1. Aceder à aplicação de Vendas e às funcionalidades de fidelização.
+2. Criar ou seleccionar um programa de fidelização.
+3. Activar o campo `use_order_total_for_points` no programa que deverá utilizar o cálculo personalizado.
+4. Confirmar que o programa está configurado para ser aplicado automaticamente aos pedidos elegíveis, de acordo com os critérios nativos do Odoo.
+5. Criar e confirmar um pedido de venda elegível.
+6. Verificar se a quantidade de pontos calculada corresponde ao valor total do pedido e à regra definida.
 
-Os menus e as opções disponíveis dependem da configuração e das permissões definidas no sistema.
+Os programas em que o campo `use_order_total_for_points` não estiver activado continuarão a utilizar o cálculo nativo de pontos.
 
 ## Testes recomendados
 
-Para validar o comportamento do módulo, recomenda-se testar os seguintes cenários:
+Para validar a implementação, recomenda-se testar os seguintes cenários:
 
-* Instalação do módulo e carregamento das dependências.
-* Integração com os mecanismos nativos de fidelização.
-* Apresentação correcta das informações de fidelização.
-* Funcionamento do widget OWL.
-* Aplicação de ajustes manuais de pontos por utilizadores autorizados.
-* Restrição das operações para utilizadores sem as permissões necessárias.
-* Execução da tarefa agendada de envio de e-mails.
-* Geração e visualização do relatório em PDF.
+* Instalação e actualização do módulo.
+* Activação e desactivação do campo `use_order_total_for_points`.
+* Cálculo correcto dos pontos para diferentes valores totais.
+* Confirmação de que os valores inferiores à próxima unidade de dez não geram pontos adicionais.
+* Verificação do comportamento de programas com a regra personalizada desactivada.
+* Confirmação de que os programas cumprem os critérios nativos de elegibilidade.
+* Verificação da integração com o mecanismo nativo de fidelização e das actualizações das carteiras.
 
 ## Princípios de implementação
 
-O desenvolvimento segue os seguintes princípios:
-
-* **Reutilização:** aproveitar as funcionalidades nativas do Odoo sempre que possível.
-* **Modularidade:** manter as funcionalidades personalizadas organizadas e independentes.
-* **Segurança:** controlar o acesso às operações através dos mecanismos de permissões do Odoo.
-* **Manutenibilidade:** seguir os padrões de desenvolvimento da plataforma.
-* **Integração:** utilizar os mecanismos nativos de modelos, vistas, assistentes, tarefas agendadas e relatórios.
+* **Reutilização:** aproveitar os modelos e mecanismos nativos do Odoo.
+* **Modularidade:** isolar a regra personalizada através da extensão dos modelos existentes.
+* **Compatibilidade:** preservar o comportamento padrão dos programas que não utilizam a regra personalizada.
+* **Manutenibilidade:** seguir os padrões de desenvolvimento e extensão do Odoo.
+* **Configuração:** permitir activar a regra personalizada por programa através de um campo booleano.
 
 ## Compatibilidade
 
 * **ERP:** Odoo
 * **Versão:** 18.0
 * **Tipo:** Módulo personalizado
+* **Dependência principal:** `sale_loyalty`
 
 ## Autor
 
