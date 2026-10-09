@@ -13,7 +13,7 @@ com base no valor total dos pedidos de venda.
 """,
     'summary': 'Gestão de Fidelização de Clientes e Cálculo de Pontos',
     'author': 'Jardel Elias Bernardo',
-    'website': '',
+    'website': 'https://github.com/JardelLion',
     'license': 'LGPL-3',
     'category': '',
     'depends': [
