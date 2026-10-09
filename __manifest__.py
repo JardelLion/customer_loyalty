@@ -18,6 +18,9 @@
     'auto_install': False,
     'application': False,
     'assets': {
-        
+        'web.assets_backend': [
+            'customer_loyalty/static/src/js/loyalty_widget.js',
+            'customer_loyalty/static/src/xml/loyalty_widget.xml',
+        ],
     }
 }

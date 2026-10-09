@@ -7,8 +7,8 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='category_id']" position="after">
-                <field name='total_loyalty_points'/>
-                <field name='loyalty_level'/>
+                <field name='total_loyalty_points' nolabel='1' widget="loyalty_points_badge"/>
+                <field name='loyalty_level' invisible='1'/>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Loyalty &amp; Points" name="loyalty_tab">
