@@ -12,9 +12,11 @@
     ],
     "data": [
         'security/security.xml',
+        "security/ir.model.access.csv",
         'data/mail_template_data.xml',
         'data/cron_data.xml',
-        "views/res_partner_views.xml"
+        "views/res_partner_views.xml",
+        'report/loyalty_report_template.xml'
     ],
     'demo': [],
     'auto_install': False,

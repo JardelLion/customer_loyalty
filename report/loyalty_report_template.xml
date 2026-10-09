@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_partner_loyalty" model="ir.actions.report">
+        <field name="name">Resumo de Pontos de Clientes</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">customer_loyalty.report_loyalty_partner_template</field>
+        <field name="report_file">customer_loyalty.report_loyalty_partner_template</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_loyalty_partner_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Resumo de Pontos do Cliente</h2>
+                        <hr/>
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <strong>Nome:</strong> <span t-field="doc.name"/><br/>
+                                <strong>Nível Atual:</strong> <span t-field="doc.loyalty_level" class="text-uppercase"/>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h3>Total de Pontos: <span t-field="doc.total_loyalty_points"/></h3>
+                            </div>
+                        </div>
+
+                        <h4>Carteiras de Pontos</h4>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Programa</th>
+                                    <th>Código do Cartão</th>
+                                    <th class="text-end">Pontos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.loyalty_card_ids" t-as="card">
+                                    <td><span t-field="card.program_id.name"/></td>
+                                    <td><span t-field="card.code"/></td>
+                                    <td class="text-end"><span t-field="card.points"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
