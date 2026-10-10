@@ -1,6 +1,7 @@
 {
     'name': 'Customer Loyalty',
-    'version': '1.0.0',
+    'odoo_version': "18.0.0",
+    'version': '1.0.2',
     'description': """
 Módulo de fidelização de clientes que estende a funcionalidade
 nativa do Odoo para permitir o cálculo personalizado de pontos
